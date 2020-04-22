@@ -50,7 +50,26 @@ app.post('/api/notes', function(req, res) {
   });
 });
 
+// Delete
+app.delete('/api/notes/:id', function(req, res) {
+  fs.readFile('db/db.json', 'utf8', function(err, data) {
+    if (err) {
+      throw err
+    }
 
+    const notes = JSON.parse(data);
+    const noteId = parseInt(req.params.id);
+    const notesFiltered = notes.filter( note => note.id !== noteId);
+
+    fs.writeFile('db/db.json', JSON.stringify(notesFiltered, null, 1), function(err) {
+      if (err) {
+        throw err
+      }
+    });
+
+    res.json(notesFiltered);
+  });
+});
 
 // Start app
 app.listen(PORT, function() {
